@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- 달력 및 툴바 -->
+    <color name="titleColor">#98D0CB</color>
+    <color name="titleSectionColor">#e598D0CB</color>
+    <item type="color" name="backButtonColor">#ffffff</item>
+    <color name="prev_color">#d8d8d8</color>
+    <color name="today_color">#00B8D4</color>
+
+    <color name="tab_active">#00B8D4</color>
+    <color name="tab_inactive">#d8d8d8</color>
+</resources>
