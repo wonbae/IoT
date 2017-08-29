@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,23 +81,21 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         return view;
     }
     private void loadExistContents(){
-//        Event event = new Event();
-//        event.title = "hello world!";
-//        event.date = Calendar.getInstance().getTime();
-//        event.save();
+        Event event = new Event();
+        event.title = "hello world!";
+        //event.date = Calendar.getInstance().getTime();
+        event.save();
 
 //        List<Event> events = Event.getAll();
 //        Event.deleteAll(events);
 
-        events = new ArrayList<>();
-        Event event = new Event();
-        event.title ="첫번째 이벤트";
-        Event event2 = new Event();
-        event2.title ="두번째 이벤트";
+
+        events = (ArrayList<Event>) Event.getAll();
+
+        // 항목 추가용 Event
         Event empty = new Event();
         empty.title = "+ 새 항목 추가";
-        events.add(event);
-        events.add(event2);
+
         events.add(empty);
     }
 
@@ -144,11 +144,25 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
     private void showCreateDialog(MaterialDialog dialog, int which){
         String eventTitle = dialog.getItems().get(which).toString();
-
+        final Event event = new Event();
         new MaterialDialog.Builder(getActivity())
                 .title("추가") // EditText를 이용해서 제목, 설명 추가하도록 개발
-                .content("내용은 없어요")
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input("내용", "", new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog dialog, CharSequence input) {
+                        // Do something
+                        event.title = input.toString();
+                    }
+                })
                 .positiveText("확인")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        event.save();
+                        dialog.notifyItemsChanged();
+                    }
+                })
                 .negativeText("취소")
                 .show();
     }
