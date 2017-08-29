@@ -31,4 +31,9 @@ public class Event extends Model {
         for(int i=0; i<events.size();i++)
             events.get(i).delete();
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }
