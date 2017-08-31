@@ -1,6 +1,7 @@
 package com.d_code.dev_auto.homesecretary.data.entity;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
 import java.util.Date;
@@ -11,6 +12,9 @@ import java.util.Date;
  */
 @Entity(nameInDb = "Events")
 public class Event {
+    @Id
+    private Long id;
+
     @Property(nameInDb = "title")
     public String title;
 
@@ -20,8 +24,9 @@ public class Event {
     @Property(nameInDb = "pathUri")
     private String pathUri;
 
-    @Generated(hash = 996856254)
-    public Event(String title, Date date, String pathUri) {
+    @Generated(hash = 1605621807)
+    public Event(Long id, String title, Date date, String pathUri) {
+        this.id = id;
         this.title = title;
         this.date = date;
         this.pathUri = pathUri;
@@ -30,8 +35,8 @@ public class Event {
     @Generated(hash = 344677835)
     public Event() {
     }
-    public Event getEmpty(){
-        return new Event("+ 새 항목 추가", new Date(), null);
+    public Event getEmpty(Date d){
+        return new Event(id, "+ 새 항목 추가", d, "");
     }
 
     public String getTitle() {
@@ -60,6 +65,14 @@ public class Event {
 
     @Override
     public String toString() {
-        return title.toString();
+        return title;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
