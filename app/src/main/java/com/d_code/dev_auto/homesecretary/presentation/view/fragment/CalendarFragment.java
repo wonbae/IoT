@@ -103,6 +103,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 //        event.title = "hello world!";
 //        //event.date = Calendar.getInstance().getTime();
 //        event.save();
+        eventDao.deleteAll();
         events = (ArrayList<Event>) eventDao.loadAll();
 
 //        List<Event> events = Event.getAll();
@@ -155,7 +156,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                        events.remove(empty);
+                        events.remove(empty);
                         dialog.dismiss();
                     }
                 })
