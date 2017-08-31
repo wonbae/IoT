@@ -2,12 +2,10 @@ package com.d_code.dev_auto.homesecretary.presentation.view.activity;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.DrawableWrapper;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +20,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -175,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                     WeatherRepo.weather.hourly.Sky sky = weatherRepo.getWeather().getHourly().get(0).getSky();
                     String[] code = sky.getCode().split("SKY_\\S");
                     int iCode = Integer.parseInt(code[1]);
-                    weatherIcon.setImageDrawable(getDrawable(Weather.drawable_id[iCode]));
+                    weatherIcon.setImageDrawable(getDrawable(Weather.icon_drawable_id[iCode]));
                     weather.setText(sky.getName());
                     DateFormat FORMATTER = new SimpleDateFormat("yyyy. MM. dd.");
                     today.setText(FORMATTER.format(CalendarDay.today().getDate()));

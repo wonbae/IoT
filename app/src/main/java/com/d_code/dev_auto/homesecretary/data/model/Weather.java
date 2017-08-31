@@ -12,11 +12,13 @@ public class Weather {
     private String wind_direction;
     private String wind_speed;
     private String icon;
-    public static final int[] drawable_id = {
+    public static final int[] icon_drawable_id = {
             R.drawable.weather_38, R.drawable.weather_01, R.drawable.weather_02, R.drawable.weather_03, R.drawable.weather_12, R.drawable.weather_13, R.drawable.weather_14, R.drawable.weather_18, R.drawable.weather_21, R.drawable.weather_32,
             R.drawable.weather_04, R.drawable.weather_29, R.drawable.weather_26, R.drawable.weather_27, R.drawable.weather_28
     };
-
+    public static final int[] bg_drawable_id= {
+//      R.drawable.
+    };
     public static Weather getInstance() {
         Weather weather = new Weather();
         return weather;
