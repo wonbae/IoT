@@ -20,7 +20,7 @@ android {
     }
 }
 greendao {
-    schemaVersion 4
+    schemaVersion 6
 }
 
 // In your root build.gradle file:
@@ -32,7 +32,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
     }
 }
 
@@ -54,11 +54,25 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // ActiveAndroid DB ORM
-//    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile 'org.greenrobot:greendao:3.2.2' // add library
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
 
     // gson serializer
     compile 'com.google.code.gson:gson:2.8.0'
+
+    // NavTab
+    compile 'devlight.io:navigationtabbar:1.2.5'
+
+    // Font Icon
+    compile "com.mikepenz:iconics-core:2.9.3@aar"
+    compile 'com.mikepenz:fontawesome-typeface:4.7.0.1@aar'
+
+    // Image
+    compile 'com.github.bumptech.glide:glide:4.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
+
+    // retrofit2
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 
 }

@@ -4,13 +4,11 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -100,6 +98,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     private void initGreenDAO(){
         hsApp = (HomeSecretaryApplication) (getActivity().getApplication());
         eventDao = hsApp.getDaoSession().getEventDao();
+        Event event = new Event();
     }
     private void loadExistContentsAndDraw(){
         //eventDao.deleteAll();
@@ -130,7 +129,10 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         Date select_date = date.getDate();
-        eventsOfDay = (ArrayList<Event>) eventDao.queryBuilder().where(EventDao.Properties.Date.eq(select_date)).orderAsc(EventDao.Properties.Date).list();
+        eventsOfDay = (ArrayList<Event>) eventDao.queryBuilder()
+                .where(EventDao.Properties.Date.eq(select_date))
+                .orderAsc(EventDao.Properties.Date)
+                .list();
         Event empty = new Event().getEmpty(select_date);
         eventsOfDay.add(empty);
         showCheckListDialog(select_date, eventsOfDay.indexOf(empty));
@@ -161,7 +163,6 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
                         if(targetEvent.title.equals("+ 새 항목 추가"))
                             eventsOfDay.remove(targetEvent);
-
 
                         dialog.dismiss();
                     }
@@ -198,6 +199,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                             targetEvent.setTitle(input.toString());
                             targetEvent.setDate(date);
                             eventDao.insert(targetEvent);
+
                             pDialog.getItems().set(position, targetEvent.toString());
                             pDialog.notifyItemChanged(position);
 

@@ -5,7 +5,29 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.d_code.dev_auto.homesecretary.presentation.view.activity.MainActivity">
+    tools:context="com.d_code.dev_auto.homesecretary.presentation.view.activity.MainActivity"
+    android:background="@android:color/white">
+    <include layout="@layout/section_weather"/>
+    <devlight.io.library.ntb.NavigationTabBar
 
+        android:id="@+id/ntb_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        app:ntb_bg_color="#ffffff"
+        app:ntb_badge_size="12sp"
+        app:ntb_badge_bg_color="#ffff0000"
+        app:ntb_badge_gravity="top"
+        app:ntb_badge_position="left"
+        app:ntb_badge_title_color="#ffffffff"
+        app:ntb_badge_use_typeface="true"
+        app:ntb_badged="true"
+        app:ntb_typeface="fonts/custom_typeface.ttf"/>
 
+    <android.support.v4.view.ViewPager
+        android:layout_marginTop="115dp"
+        android:id="@+id/vp_horizontal_ntb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </FrameLayout>

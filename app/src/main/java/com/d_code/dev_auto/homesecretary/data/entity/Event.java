@@ -24,19 +24,28 @@ public class Event {
     @Property(nameInDb = "pathUri")
     private String pathUri;
 
-    @Generated(hash = 1605621807)
-    public Event(Long id, String title, Date date, String pathUri) {
+    @Property(nameInDb = "detail")
+    private String detail;
+
+    @Generated(hash = 1576971828)
+    public Event(Long id, String title, Date date, String pathUri, String detail) {
         this.id = id;
         this.title = title;
         this.date = date;
         this.pathUri = pathUri;
+        this.detail = detail;
     }
 
     @Generated(hash = 344677835)
     public Event() {
     }
-    public Event getEmpty(Date d){
-        return new Event(id, "+ 새 항목 추가", d, "");
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -63,16 +72,18 @@ public class Event {
         this.pathUri = pathUri;
     }
 
+    public String getDetail() {
+        return this.detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
     @Override
     public String toString() {
         return title;
     }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Event getEmpty(Date d){
+        return new Event(id, "+ 새 항목 추가", d, "","");
     }
 }

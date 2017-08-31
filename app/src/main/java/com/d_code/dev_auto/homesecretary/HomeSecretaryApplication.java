@@ -18,9 +18,6 @@ public class HomeSecretaryApplication extends Application {
         super.onCreate();
         mDaoSession = new DaoMaster(new DbOpenHelper(this, "hs.db").getWritableDb()).newSession();
 
-//        if(mDaoSession.getCheckListDao().loadAll().size() == 0){
-//            mDaoSession.getCheckListDao().insert(new CheckList());
-//        }
     }
     public DaoSession getDaoSession() {
         return mDaoSession;

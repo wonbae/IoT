@@ -5,6 +5,8 @@ import android.util.Log;
 
 import org.greenrobot.greendao.database.Database;
 
+import static com.d_code.dev_auto.homesecretary.data.entity.DaoMaster.dropAllTables;
+
 /**
  * Created by mcauto on 2017. 8. 31..
  */
@@ -19,10 +21,8 @@ public class DbOpenHelper extends DaoMaster.OpenHelper {
     public void onUpgrade(Database db, int oldVersion, int newVersion) {
         super.onUpgrade(db, oldVersion, newVersion);
         Log.d("DEBUG", "DB_OLD_VERSION : " + oldVersion + ", DB_NEW_VERSION : " + newVersion);
-        switch (oldVersion) {
-            case 1:
-            case 2:
-                //db.execSQL("ALTER TABLE " + UserDao.TABLENAME + " ADD COLUMN " + UserDao.Properties.Name.columnName + " TEXT DEFAULT 'DEFAULT_VAL'");
-        }
+
+        dropAllTables(db, true);
+        onCreate(db);
     }
 }
