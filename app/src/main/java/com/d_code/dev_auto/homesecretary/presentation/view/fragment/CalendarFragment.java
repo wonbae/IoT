@@ -13,8 +13,10 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.d_code.dev_auto.homesecretary.HomeSecretaryApplication;
 import com.d_code.dev_auto.homesecretary.R;
 import com.d_code.dev_auto.homesecretary.data.entity.Event;
+import com.d_code.dev_auto.homesecretary.data.entity.EventDao;
 import com.d_code.dev_auto.homesecretary.presentation.view.component.decorator.EventDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -40,7 +42,15 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
     @BindView(R.id.calendarView)
     MaterialCalendarView widget;
+
+    private HomeSecretaryApplication hsApp;
+
+
+
+    private EventDao eventDao;
+
     private ArrayList<Event> events;
+    private Event empty = new Event().getEmpty();
 
     private EventDecorator decorator;
 
@@ -58,9 +68,13 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
         ButterKnife.bind(this, view);
+
+        initGreenDAO();
+
         widget.setOnDateChangedListener(this);
         widget.setOnMonthChangedListener(this);
         widget.setPagingEnabled(false);
@@ -80,23 +94,23 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
         return view;
     }
+    private void initGreenDAO(){
+        hsApp = (HomeSecretaryApplication) (getActivity().getApplication());
+        eventDao = hsApp.getDaoSession().getEventDao();
+    }
     private void loadExistContents(){
-        Event event = new Event();
-        event.title = "hello world!";
-        //event.date = Calendar.getInstance().getTime();
-        event.save();
+//        Event event = new Event();
+//        event.title = "hello world!";
+//        //event.date = Calendar.getInstance().getTime();
+//        event.save();
+        events = (ArrayList<Event>) eventDao.loadAll();
 
 //        List<Event> events = Event.getAll();
 //        Event.deleteAll(events);
 
 
-        events = (ArrayList<Event>) Event.getAll();
+//        events = (ArrayList<Event>) Event.getAll();
 
-        // 항목 추가용 Event
-        Event empty = new Event();
-        empty.title = "+ 새 항목 추가";
-
-        events.add(empty);
     }
 
     // Interaction Calendar
@@ -109,9 +123,11 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         java.util.Date d = date.getDate();
         String select_date = FORMATTER.format(d);
-        showCheckListDialog(select_date);
+
+        events.add(empty);
+        showCheckListDialog(select_date, empty);
     }
-    private void showCheckListDialog(String date) {
+    private void showCheckListDialog(String date, final Event event) {
         new MaterialDialog.Builder(getActivity())
                 .title(date)
                 .items(events)
@@ -129,12 +145,17 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if(empty.title.equals("+ 새 항목 추가"))
+                            events.remove(empty);
+                        else
+                            empty = new Event().getEmpty();
                         dialog.dismiss();
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        events.remove(empty);
                         dialog.dismiss();
                     }
                 })
@@ -143,8 +164,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     }
 
     private void showCreateDialog(MaterialDialog dialog, int which){
-        String eventTitle = dialog.getItems().get(which).toString();
-        final Event event = new Event();
+
         new MaterialDialog.Builder(getActivity())
                 .title("추가") // EditText를 이용해서 제목, 설명 추가하도록 개발
                 .inputType(InputType.TYPE_CLASS_TEXT)
@@ -152,15 +172,16 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
                         // Do something
-                        event.title = input.toString();
+                        empty.setTitle(input.toString());
+
                     }
                 })
                 .positiveText("확인")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        event.save();
-                        dialog.notifyItemsChanged();
+                        eventDao.insert(empty);
+                      //  dialog.notifyItemsChanged();
                     }
                 })
                 .negativeText("취소")

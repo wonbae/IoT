@@ -2,18 +2,13 @@ package com.d_code.dev_auto.homesecretary.presentation.view.dialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.d_code.dev_auto.homesecretary.data.entity.CheckList;
+import com.d_code.dev_auto.homesecretary.data.entity.Event;
 import com.google.gson.Gson;
 
 
@@ -82,7 +77,7 @@ public class VariableItemListHandler {
         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         dialog.getWindow().setAttributes(params);
     }
-    private CheckList loadCheckList(String date){
+    private Event loadCheckList(String date){
         return null;
     }
 }

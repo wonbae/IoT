@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.d_code.dev_auto.homesecretary">
-    <meta-data
-        android:name="AA_DB_NAME"
-        android:value="checkList.db" />
-    <meta-data
-        android:name="AA_DB_VERSION"
-        android:value="1" />
-    <meta-data
-        android:name="AA_MODELS"
-        android:value="com.d_code.dev_auto.homesecretary.data.entity.CheckList, com.d_code.dev_auto.homesecretary.data.entity.Event" />
-
     <application
         android:name=".HomeSecretaryApplication"
         android:allowBackup="true"

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
@@ -18,11 +19,24 @@ android {
         }
     }
 }
-repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+greendao {
+    schemaVersion 2
 }
+
+// In your root build.gradle file:
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
+    }
+}
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -40,7 +54,8 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // ActiveAndroid DB ORM
-    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+//    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile 'org.greenrobot:greendao:3.2.2' // add library
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
 
     // gson serializer

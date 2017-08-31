@@ -1,39 +1,65 @@
 package com.d_code.dev_auto.homesecretary.data.entity;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
-
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.Generated;
 import java.util.Date;
-import java.util.List;
+
 
 /**
  * Created by mcauto on 2017-08-29.
  */
-@Table(name = "Events")
-public class Event extends Model {
-    @Column(name = "title")
+@Entity(nameInDb = "Events")
+public class Event {
+    @Property(nameInDb = "title")
     public String title;
-    @Column(name = "date")
-    public java.util.Date date;
 
-    public static List<Event> getAll(){
-        return new Select().from(Event.class).orderBy("title DESC").execute();
+    @Property(nameInDb = "date")
+    private Date date;
+
+    @Property(nameInDb = "pathUri")
+    private String pathUri;
+
+    @Generated(hash = 996856254)
+    public Event(String title, Date date, String pathUri) {
+        this.title = title;
+        this.date = date;
+        this.pathUri = pathUri;
     }
-    public static void delete(Event event){
-        event.delete();
+
+    @Generated(hash = 344677835)
+    public Event() {
     }
-    public static void deleteAll(List<Event> events)
-    {
-        for(int i=0; i<events.size();i++)
-            events.get(i).delete();
+    public Event getEmpty(){
+        return new Event("+ 새 항목 추가", new Date(), null);
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Date getDate() {
+        return this.date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getPathUri() {
+        return this.pathUri;
+    }
+
+    public void setPathUri(String pathUri) {
+        this.pathUri = pathUri;
     }
 
     @Override
     public String toString() {
-        return title;
+        return title.toString();
     }
 }
