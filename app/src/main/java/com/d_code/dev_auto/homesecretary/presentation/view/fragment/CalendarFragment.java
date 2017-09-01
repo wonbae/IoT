@@ -10,6 +10,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -194,7 +195,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 View view = dialog.getCustomView();
                 EditText title = (EditText) view.findViewById(R.id.title);
                 TextView time = (TextView) view.findViewById(R.id.time);
-                EditText path = (EditText) view.findViewById(R.id.path);
+                Button path = (Button) view.findViewById(R.id.path);
                 EditText detail = (EditText) view.findViewById(R.id.detail);
                 String d = FORMATTER.format(date);
                 time.setText(d);
@@ -251,7 +252,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
         EditText title = (EditText) view.findViewById(R.id.title);
         TextView time = (TextView) view.findViewById(R.id.time);
-        EditText path = (EditText) view.findViewById(R.id.path);
+        Button path = (Button) view.findViewById(R.id.path);
         EditText detail = (EditText) view.findViewById(R.id.detail);
 
         title.setText(updateEvent.getTitle());
