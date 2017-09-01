@@ -147,10 +147,9 @@ public class NotifyActivity extends Activity {
     }
     public void loadFixedEvent(){
         FixedItemAdapter adapter = new FixedItemAdapter(getApplication());
+
         fixedGridView.setAdapter(adapter);
 
         adapter.setFixedEvents((ArrayList<FixedEvent>) fixedEventDao.loadAll());
-
-
     }
 }

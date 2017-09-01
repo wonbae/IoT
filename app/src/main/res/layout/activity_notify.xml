@@ -32,12 +32,8 @@
     <GridView
         android:id="@+id/fixed_item_gridlist"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_weight="0.45"
-        android:numColumns="3"
-        android:stretchMode="columnWidth"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:numColumns="3">
 
     </GridView>
 

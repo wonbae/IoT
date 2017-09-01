@@ -98,16 +98,18 @@ public class MainActivity extends AppCompatActivity {
                         beaconManager.stopRanging(region);
                         startCheckListActivity();
                         beaconManager.startRanging(region);
-//                        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-//                        dialog.setTitle("현관문 도착"+nearestBeacon.getRssi())
-//                                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        beaconManager.startRanging(region);
-//                                    }
-//                                }).create().show();
                     }
                 }
+            }
+        });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                beaconManager.startRanging(region);
             }
         });
     }

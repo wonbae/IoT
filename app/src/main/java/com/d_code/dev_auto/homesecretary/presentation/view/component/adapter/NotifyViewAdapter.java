@@ -66,7 +66,7 @@ public class NotifyViewAdapter extends RecyclerView.Adapter<NotifyItemViewHolder
                 holder.comment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!events.get(position).getPathUri().equals("")) {
+                        if(events.get(position).getPathUri() != null)  {
                             Intent i = new Intent(context, RoadSearchActivity.class);
                             i.putExtra("pathURI", events.get(position).getPathUri());
                             context.startActivity(i);
