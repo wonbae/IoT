@@ -26,6 +26,12 @@
     <array name="nav">
         <item>#ffffff</item>
     </array>
+    <array name="weather">
+        <item>맑을 때 멘트</item>
+        <item>흐릴 때 멘트</item>
+        <item>비 올 때 멘트</item>
+        <item>눈 올 때 멘트</item>
+    </array>
     <string name="menu_settings">Settings</string>
     <string name="hintTxtItem">Enter an item here ...</string>
     <string name="lblBtnAdd">Add Item</string>

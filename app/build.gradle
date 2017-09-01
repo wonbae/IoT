@@ -20,7 +20,7 @@ android {
     }
 }
 greendao {
-    schemaVersion 6
+    schemaVersion 9
 }
 
 // In your root build.gradle file:

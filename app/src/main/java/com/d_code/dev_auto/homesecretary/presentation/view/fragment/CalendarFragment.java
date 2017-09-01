@@ -4,11 +4,15 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -22,6 +26,8 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
+
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -179,71 +185,78 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 .show();
     }
 
-    private void showCreateDialog(MaterialDialog dialog, final int position,final Date date){
+    private void showCreateDialog(MaterialDialog dialog, final int position,final Date date) {
+        boolean wrapInScrollView = true;
         pDialog = dialog;
+        MaterialDialog.SingleButtonCallback dialogCallback = new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                View view = dialog.getCustomView();
+                EditText title = (EditText) view.findViewById(R.id.title);
+                TextView time = (TextView) view.findViewById(R.id.time);
+                EditText path = (EditText) view.findViewById(R.id.path);
+                EditText detail = (EditText) view.findViewById(R.id.detail);
+                String d = FORMATTER.format(date);
+                time.setText(d);
+
+                Event event = new Event();
+                event.setDate(date);
+
+                event.setTitle(title.getText().toString());
+                event.setDetail(detail.getText().toString());
+
+                event.setPathUri(path.getHint().toString()); // WebView에서 가져오기
+                if(!path.getText().equals(""))
+                    event.setType(1); // 길찾기
+                else
+                    event.setType(2); // 일반 항목
+
+                eventDao.insert(event);
+
+                pDialog.getItems().set(position, event.toString());
+                pDialog.notifyItemChanged(position);
+            }
+        };
         new MaterialDialog.Builder(getActivity())
-                .title("추가") // EditText를 이용해서 제목, 설명 추가하도록 개발
-                .inputType(InputType.TYPE_CLASS_TEXT)
+                .customView(R.layout.dialog_create_event, wrapInScrollView)
                 .positiveText("확인")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        positive = true;
-                    }
-                })
-                .input("내용", "", new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        if(positive) {
-                            Event targetEvent = eventsOfDay.get(position);
-                            targetEvent.setTitle(input.toString());
-                            targetEvent.setDate(date);
-                            eventDao.insert(targetEvent);
-
-                            pDialog.getItems().set(position, targetEvent.toString());
-                            pDialog.notifyItemChanged(position);
-
-                        }
-                    }
-                })
+                .onPositive(dialogCallback)
                 .negativeText("취소")
                 .show();
+
     }
-    private void showUpdateDialog(MaterialDialog dialog, final int position, final Date date) {
-        String eventTitle = pDialog.getItems().get(position).toString();
+    private void showUpdateDialog(MaterialDialog dialog, final int position, final Date date){
+        boolean wrapInScrollView = true;
+        final Event updateEvent = events.get(position);
         pDialog = dialog;
-        new MaterialDialog.Builder(getActivity())
-                .title(eventTitle+ " 수정") // EditText를 이용해서 제목, 설명 추가하도록 개발
-                .inputType(InputType.TYPE_CLASS_TEXT)
+        MaterialDialog.SingleButtonCallback dialogCallback = new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                eventDao.update(updateEvent);
+
+                pDialog.getItems().set(position, updateEvent.toString());
+                pDialog.getRecyclerView().getAdapter();
+                pDialog.notifyItemChanged(position);
+            }
+        };
+        MaterialDialog mDialog = new MaterialDialog.Builder(getActivity())
+                .customView(R.layout.dialog_create_event, wrapInScrollView)
                 .positiveText("확인")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                        positive = true;
-                    }
-                })
-                .input(eventTitle, "", new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(MaterialDialog dialog, CharSequence input) {
-                        if(positive) {
-                            // Do something
-                            Event updateEvent = eventsOfDay.get(position);
-                            updateEvent.setTitle(input.toString());
-                            updateEvent.setDate(date);
-                            eventsOfDay.set(position, updateEvent);
-
-                            EditText et = dialog.getInputEditText();
-                            et.setHint(updateEvent.title);
-                            eventDao.update(updateEvent);
-
-                            pDialog.getItems().set(position, updateEvent.toString());
-                            pDialog.getRecyclerView().getAdapter();
-                            pDialog.notifyItemChanged(position);
-                        }
-                    }
-                })
+                .onPositive(dialogCallback)
                 .negativeText("취소")
                 .show();
+
+
+        View view = mDialog.getCustomView();
+
+        EditText title = (EditText) view.findViewById(R.id.title);
+        TextView time = (TextView) view.findViewById(R.id.time);
+        EditText path = (EditText) view.findViewById(R.id.path);
+        EditText detail = (EditText) view.findViewById(R.id.detail);
+
+        title.setText(updateEvent.getTitle());
+        time.setText(FORMATTER.format(updateEvent.getDate()));
+        path.setText(updateEvent.getPathUri().toString());
+        detail.setText(updateEvent.getDetail());
     }
 }

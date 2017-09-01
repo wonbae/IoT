@@ -4,45 +4,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1">
-    <LinearLayout
-        android:id="@+id/weather_notice_section"
+    <TextView
+        android:id="@+id/notify_today"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:background="@color/colorAccent">
-        <FrameLayout
-            android:id="@+id/weather_section_subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:background="#c7231F20"
-            >
-
-        </FrameLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/path_section"
+        android:layout_weight="0.05"
+        android:text="0000.00.00."
+        android:textSize="20dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/notify_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
-        android:background="@android:color/holo_red_dark">
-        <FrameLayout
-            android:id="@+id/path_section_subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:background="#c7231F20"
-            >
+        android:layout_weight="0.55">
 
-        </FrameLayout>
-    </LinearLayout>
-    <GridLayout
+    </android.support.v7.widget.RecyclerView>
+    <GridView
         android:id="@+id/fixed_item_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.4">
+        android:layout_height="50dp"
+        android:layout_weight="0.45"
+        android:numColumns="3"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-    </GridLayout>
+    </GridView>
 
 
 
