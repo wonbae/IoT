@@ -9,7 +9,7 @@ import com.d_code.dev_auto.homesecretary.presentation.view.fragment.ScheduleFrag
 import com.d_code.dev_auto.homesecretary.presentation.view.fragment.SettingFragment;
 
 public class TabPagerAdapter extends FragmentPagerAdapter {
-    private static int NUM_ITEMS =3;
+    private static int NUM_ITEMS =4;
 
     public TabPagerAdapter(FragmentManager fragmentManager) {
         super(fragmentManager);

@@ -21,8 +21,7 @@
         app:ntb_badge_position="left"
         app:ntb_badge_title_color="#ffffffff"
         app:ntb_badge_use_typeface="true"
-        app:ntb_badged="true"
-        app:ntb_typeface="fonts/custom_typeface.ttf"/>
+        app:ntb_badged="true" />
 
     <android.support.v4.view.ViewPager
         android:layout_marginTop="115dp"

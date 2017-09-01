@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.d_code.dev_auto.homesecretary">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name=".HomeSecretaryApplication"
         android:allowBackup="true"
@@ -19,6 +24,6 @@
         <activity android:name=".presentation.view.activity.NotifyActivity">
 
         </activity>
+        <activity android:name=".presentation.view.activity.RoadSearchActivity" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

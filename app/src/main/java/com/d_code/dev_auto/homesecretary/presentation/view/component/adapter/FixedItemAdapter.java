@@ -1,6 +1,7 @@
 package com.d_code.dev_auto.homesecretary.presentation.view.component.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 
 public class FixedItemAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<FixedEvent> fixedEvents;
+    private ArrayList<FixedEvent> fixedEvents= new ArrayList<>();
 
     public FixedItemAdapter(Context c) {
         mContext = c;
@@ -47,7 +48,17 @@ public class FixedItemAdapter extends BaseAdapter {
             textView = (TextView) convertView;
         }
         textView.setText(fixedEvents.get(position).getTitle());
-
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView t = (TextView)v;
+                t.setTextColor(Color.RED);
+            }
+        });
         return textView;
+    }
+
+    public void setFixedEvents(ArrayList<FixedEvent> fixedEvents) {
+        this.fixedEvents = fixedEvents;
     }
 }

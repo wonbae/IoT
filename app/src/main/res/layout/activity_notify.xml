@@ -18,11 +18,19 @@
         android:id="@+id/notify_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.55">
+        android:background="@drawable/editbox">
 
     </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:background="@drawable/editbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:text="자주 까먹는 물품"
+        android:gravity="center"
+        android:layout_weight="0.05"/>
     <GridView
-        android:id="@+id/fixed_item_list"
+        android:id="@+id/fixed_item_gridlist"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_weight="0.45"

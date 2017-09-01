@@ -5,12 +5,14 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.util.Date;
+
 /**
  * Created by mcauto on 2017. 9. 1..
  */
 @Entity(nameInDb = "FixedEvents")
 public class FixedEvent {
-    @Id
+    @Id(autoincrement = true)
     private Long id;
 
     @Property(nameInDb = "title")
@@ -53,4 +55,14 @@ public class FixedEvent {
     public void setDetail(String detail) {
         this.detail = detail;
     }
+    @Override
+    public String toString() {
+        return title;
+    }
+    public FixedEvent getEmpty(){
+        FixedEvent empty = new FixedEvent();
+        empty.setTitle("+ 새 항목 추가");
+        return empty;
+    }
+
 }

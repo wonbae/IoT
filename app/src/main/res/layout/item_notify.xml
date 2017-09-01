@@ -2,7 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     android:id="@+id/weather_notice_section"
     android:layout_width="match_parent"
-    android:layout_height="170dp"
+    android:layout_height="130dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical">
     <ImageView

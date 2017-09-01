@@ -14,8 +14,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.d_code.dev_auto.homesecretary.HomeSecretaryApplication;
 import com.d_code.dev_auto.homesecretary.R;
 import com.d_code.dev_auto.homesecretary.data.entity.Event;
+import com.d_code.dev_auto.homesecretary.data.entity.EventDao;
+import com.d_code.dev_auto.homesecretary.data.entity.FixedEvent;
+import com.d_code.dev_auto.homesecretary.data.entity.FixedEventDao;
 import com.d_code.dev_auto.homesecretary.data.model.Weather;
 import com.d_code.dev_auto.homesecretary.data.repository.WeatherRepo;
 import com.d_code.dev_auto.homesecretary.presentation.view.component.adapter.FixedItemAdapter;
@@ -24,8 +28,12 @@ import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
+import org.greenrobot.greendao.query.QueryBuilder;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,17 +49,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NotifyActivity extends Activity {
 
-
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private NotifyViewAdapter notifyViewAdapter;
+
+    @BindView(R.id.fixed_item_gridlist)
+    GridView fixedGridView;
     @BindView(R.id.notify_today)
     TextView today;
+    private HomeSecretaryApplication hsApp;
+    private EventDao eventDao;
+    private FixedEventDao fixedEventDao;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notify);
         ButterKnife.bind(this);
+        initGreenDAO();
         init();
 
     }
@@ -64,6 +79,11 @@ public class NotifyActivity extends Activity {
 
         recyclerView.setAdapter(notifyViewAdapter);
         setWeatherView();
+    }
+    private void initGreenDAO(){
+        hsApp = (HomeSecretaryApplication) (getApplication());
+        eventDao = hsApp.getDaoSession().getEventDao();
+        fixedEventDao = hsApp.getDaoSession().getFixedEventDao();
     }
     public void setWeatherView(){
         Retrofit client = new Retrofit.Builder().baseUrl("http://apis.skplanetx.com/")
@@ -92,6 +112,8 @@ public class NotifyActivity extends Activity {
                     weatherEvent.setDetail(weatherComment);
                     weatherEvent.setICode(iCode);
                     notifyViewAdapter.addWeatherEvent(weatherEvent);
+                    loadActivityEvent();
+                    loadFixedEvent();
 
                     DateFormat FORMATTER = new SimpleDateFormat("yyyy. MM. dd.");
                     today.setText(FORMATTER.format(CalendarDay.today().getDate()));
@@ -107,9 +129,28 @@ public class NotifyActivity extends Activity {
         });
     }
     public void loadActivityEvent(){
-
+        Date todayDate = CalendarDay.today().getDate();
+        QueryBuilder<Event> eventQueryBuilder = eventDao.queryBuilder();
+        ArrayList<Event> activityEvents = (ArrayList<Event>)eventQueryBuilder
+                .where(EventDao.Properties.Type.eq(1), EventDao.Properties.Date.eq(todayDate))
+                .list();
+        if(activityEvents.size()>0)
+            notifyViewAdapter.addActivityEvent(activityEvents);
+        else {
+            Event active = new Event();
+            active.setType(1);
+            active.setPathUri("");
+            active.setDepartureToArrival("일정이 없습니다");
+            activityEvents.add(active);
+            notifyViewAdapter.addActivityEvent(activityEvents);
+        }
     }
-    public void loadFixedList(){
-//        fixed_item_lis;
+    public void loadFixedEvent(){
+        FixedItemAdapter adapter = new FixedItemAdapter(getApplication());
+        fixedGridView.setAdapter(adapter);
+
+        adapter.setFixedEvents((ArrayList<FixedEvent>) fixedEventDao.loadAll());
+
+
     }
 }

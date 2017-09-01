@@ -1,18 +1,30 @@
 package com.d_code.dev_auto.homesecretary.presentation.view.activity;
 
+import android.Manifest;
+import android.app.PendingIntent;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.d_code.dev_auto.homesecretary.R;
 import com.d_code.dev_auto.homesecretary.data.model.Weather;
 import com.d_code.dev_auto.homesecretary.data.repository.WeatherRepo;
 import com.d_code.dev_auto.homesecretary.presentation.view.component.adapter.TabPagerAdapter;
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Region;
 import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -20,6 +32,8 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +46,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     private TabPagerAdapter adapterViewPager;
+    private BeaconManager beaconManager;
+    private Region region;
+
     @BindView(R.id.ntb_horizontal)
     NavigationTabBar navigationTabBar;
     @BindView(R.id.vp_horizontal_ntb)
@@ -43,12 +60,17 @@ public class MainActivity extends AppCompatActivity {
     ImageView weatherIcon;
     @BindView(R.id.weather_txt)
     TextView weather;
+    @BindView(R.id.weather_img)
+    LinearLayout weather_img;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initUI();
+        initBLE();
     }
     private void initUI(){
         adapterViewPager = new TabPagerAdapter(getFragmentManager());
@@ -56,6 +78,65 @@ public class MainActivity extends AppCompatActivity {
 
         setWeatherView();
         initNavigationBar();
+
+    }
+    private void initBLE(){
+        checkPermissions();
+        beaconManager = new BeaconManager(this);
+        region = new Region("monitoring region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), 40259, 11605);
+
+        beaconManager.setRangingListener(new BeaconManager.RangingListener() {
+            @Override
+            public void onBeaconsDiscovered(final Region region, List<Beacon> list) {
+                if(!list.isEmpty()){
+                    Beacon nearestBeacon = list.get(0);
+
+                    Log.d("NearestBeacon", "is" + nearestBeacon.getRssi());
+
+                    if(nearestBeacon.getRssi() > -70){
+
+                        beaconManager.stopRanging(region);
+                        startCheckListActivity();
+                        beaconManager.startRanging(region);
+//                        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+//                        dialog.setTitle("현관문 도착"+nearestBeacon.getRssi())
+//                                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        beaconManager.startRanging(region);
+//                                    }
+//                                }).create().show();
+                    }
+                }
+            }
+        });
+    }
+    private void startCheckListActivity(){
+        Intent i = new Intent(MainActivity.this, NotifyActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        PendingIntent pi = PendingIntent.getActivity(MainActivity.this, 0, i, PendingIntent.FLAG_ONE_SHOT);
+        try {
+            pi.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void checkPermissions(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+            } else {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},0
+                );
+            }
+        }
 
     }
     private void initNavigationBar(){
@@ -173,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] code = sky.getCode().split("SKY_\\S");
                     int iCode = Integer.parseInt(code[1]);
                     weatherIcon.setImageDrawable(getDrawable(Weather.icon_drawable_id[iCode]));
+                    weather_img.setBackground(getDrawable(Weather.bg_drawable_id[iCode]));
                     weather.setText(sky.getName());
                     DateFormat FORMATTER = new SimpleDateFormat("yyyy. MM. dd.");
                     today.setText(FORMATTER.format(CalendarDay.today().getDate()));

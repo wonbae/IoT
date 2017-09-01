@@ -7,17 +7,17 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="제목"/>
-    <TextView
+    <EditText
         android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textSize="20dp"
         android:layout_marginLeft="5dp"
         android:gravity="center_vertical" />
     <Button
+        android:theme="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/path"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="80dp"
         android:gravity="center_vertical"
         android:hint="경로"/>
     <TextView

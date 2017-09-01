@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Entity(nameInDb = "Events")
 public class Event {
-    @Id
+    @Id(autoincrement = true)
     private Long id;
 
     @Property(nameInDb = "title")

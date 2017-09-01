@@ -1,17 +1,21 @@
 package com.d_code.dev_auto.homesecretary.presentation.view.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,6 +25,7 @@ import com.d_code.dev_auto.homesecretary.HomeSecretaryApplication;
 import com.d_code.dev_auto.homesecretary.R;
 import com.d_code.dev_auto.homesecretary.data.entity.Event;
 import com.d_code.dev_auto.homesecretary.data.entity.EventDao;
+import com.d_code.dev_auto.homesecretary.presentation.view.activity.RoadSearchActivity;
 import com.d_code.dev_auto.homesecretary.presentation.view.component.decorator.EventDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -61,7 +66,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     private MaterialDialog pDialog;
 
     private EventDecorator decorator;
-
+    private Button path;
     public CalendarFragment() {
 
     }
@@ -194,11 +199,10 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                 View view = dialog.getCustomView();
                 EditText title = (EditText) view.findViewById(R.id.title);
-                TextView time = (TextView) view.findViewById(R.id.time);
+                EditText time = (EditText) view.findViewById(R.id.time);
                 Button path = (Button) view.findViewById(R.id.path);
                 EditText detail = (EditText) view.findViewById(R.id.detail);
-                String d = FORMATTER.format(date);
-                time.setText(d);
+                time.setText(FORMATTER.format(date));
 
                 Event event = new Event();
                 event.setDate(date);
@@ -218,21 +222,32 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 pDialog.notifyItemChanged(position);
             }
         };
-        new MaterialDialog.Builder(getActivity())
+        MaterialDialog d = new MaterialDialog.Builder(getActivity())
                 .customView(R.layout.dialog_create_event, wrapInScrollView)
                 .positiveText("확인")
                 .onPositive(dialogCallback)
                 .negativeText("취소")
                 .show();
+        View view = d.getCustomView();
+        Button pathFinder = (Button) view.findViewById(R.id.path);
+        pathFinder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), RoadSearchActivity.class);
+                i.putExtra("position",position);
+                startActivityForResult(i,1231);
+            }
+        });
 
     }
     private void showUpdateDialog(MaterialDialog dialog, final int position, final Date date){
         boolean wrapInScrollView = true;
-        final Event updateEvent = events.get(position);
+
         pDialog = dialog;
         MaterialDialog.SingleButtonCallback dialogCallback = new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                Event updateEvent = events.get(position);
                 eventDao.update(updateEvent);
 
                 pDialog.getItems().set(position, updateEvent.toString());
@@ -251,13 +266,59 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
         View view = mDialog.getCustomView();
 
         EditText title = (EditText) view.findViewById(R.id.title);
-        TextView time = (TextView) view.findViewById(R.id.time);
-        Button path = (Button) view.findViewById(R.id.path);
-        EditText detail = (EditText) view.findViewById(R.id.detail);
+        EditText time = (EditText) view.findViewById(R.id.time);
 
+        path = (Button) view.findViewById(R.id.path);
+        EditText detail = (EditText) view.findViewById(R.id.detail);
+        Event updateEvent = events.get(position);
         title.setText(updateEvent.getTitle());
         time.setText(FORMATTER.format(updateEvent.getDate()));
-        path.setText(updateEvent.getPathUri().toString());
+        path.setText(updateEvent.getDepartureToArrival());
+        path.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(eventsOfDay.get(position).getPathUri() != null
+                    || !eventsOfDay.get(position).getPathUri().equals("")) {
+                    Intent i = new Intent(getActivity(), RoadSearchActivity.class);
+                    i.putExtra("pathURI", eventsOfDay.get(position).getPathUri());
+                    i.putExtra("position", position);
+                    startActivityForResult(i, 1231);
+                }else
+                {
+                    Intent i = new Intent(getActivity(), RoadSearchActivity.class);
+                    i.putExtra("position", position);
+                    startActivityForResult(i, 1231);
+                }
+            }
+        });
         detail.setText(updateEvent.getDetail());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1231) {
+            Log.d("test", "onActivityResult: shot");
+            if(resultCode == Activity.RESULT_OK){
+                String pathURI=data.getStringExtra("pathURI");
+                String departureToArrival = data.getStringExtra("departureToArrival");
+                View view = pDialog.getCustomView();
+                int position = data.getIntExtra("position",0);
+                if(events.size()>0) {
+                    eventsOfDay.get(position).setPathUri(pathURI);
+                    eventsOfDay.get(position).setDepartureToArrival(departureToArrival);
+                    eventsOfDay.get(position).setType(1);
+
+                    eventDao.update(eventsOfDay.get(position));
+                }
+                else{
+
+                }
+
+
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //만약 반환값이 없을 경우의 코드를 여기에 작성하세요.
+            }
+        }
     }
 }
