@@ -61,9 +61,13 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
     private ArrayList<Event> events;
     private ArrayList<Event> eventsOfDay;
+    private String departureToArrival;
+    private String pathURI;
+
     private boolean positive = false;
 
     private MaterialDialog pDialog;
+    private MaterialDialog childDialog;
 
     private EventDecorator decorator;
     private Button path;
@@ -107,10 +111,28 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
 
         return view;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("", "onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("", "onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("", "onResume");
+    }
+
     private void initGreenDAO(){
         hsApp = (HomeSecretaryApplication) (getActivity().getApplication());
         eventDao = hsApp.getDaoSession().getEventDao();
-        Event event = new Event();
     }
     private void loadExistContentsAndDraw(){
         //eventDao.deleteAll();
@@ -210,25 +232,23 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 event.setTitle(title.getText().toString());
                 event.setDetail(detail.getText().toString());
 
-                event.setPathUri(path.getHint().toString()); // WebView에서 가져오기
-                if(!path.getText().equals(""))
-                    event.setType(1); // 길찾기
-                else
-                    event.setType(2); // 일반 항목
+                event.setType(1);
 
                 eventDao.insert(event);
+                eventsOfDay.add(event);
 
                 pDialog.getItems().set(position, event.toString());
                 pDialog.notifyItemChanged(position);
             }
         };
-        MaterialDialog d = new MaterialDialog.Builder(getActivity())
+        childDialog = new MaterialDialog.Builder(getActivity())
                 .customView(R.layout.dialog_create_event, wrapInScrollView)
                 .positiveText("확인")
                 .onPositive(dialogCallback)
                 .negativeText("취소")
                 .show();
-        View view = d.getCustomView();
+
+        View view = childDialog.getCustomView();
         Button pathFinder = (Button) view.findViewById(R.id.path);
         pathFinder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,7 +275,7 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 pDialog.notifyItemChanged(position);
             }
         };
-        MaterialDialog mDialog = new MaterialDialog.Builder(getActivity())
+        childDialog = new MaterialDialog.Builder(getActivity())
                 .customView(R.layout.dialog_create_event, wrapInScrollView)
                 .positiveText("확인")
                 .onPositive(dialogCallback)
@@ -263,32 +283,25 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
                 .show();
 
 
-        View view = mDialog.getCustomView();
+        View view = childDialog.getCustomView();
 
         EditText title = (EditText) view.findViewById(R.id.title);
         EditText time = (EditText) view.findViewById(R.id.time);
 
         path = (Button) view.findViewById(R.id.path);
         EditText detail = (EditText) view.findViewById(R.id.detail);
-        Event updateEvent = events.get(position);
+        Event updateEvent = eventsOfDay.get(position);
         title.setText(updateEvent.getTitle());
         time.setText(FORMATTER.format(updateEvent.getDate()));
         path.setText(updateEvent.getDepartureToArrival());
         path.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(eventsOfDay.get(position).getPathUri() != null
-                    || !eventsOfDay.get(position).getPathUri().equals("")) {
+                    String pathURI = eventsOfDay.get(position).getPathUri();
                     Intent i = new Intent(getActivity(), RoadSearchActivity.class);
-                    i.putExtra("pathURI", eventsOfDay.get(position).getPathUri());
+                    i.putExtra("pathURI", pathURI);
                     i.putExtra("position", position);
                     startActivityForResult(i, 1231);
-                }else
-                {
-                    Intent i = new Intent(getActivity(), RoadSearchActivity.class);
-                    i.putExtra("position", position);
-                    startActivityForResult(i, 1231);
-                }
             }
         });
         detail.setText(updateEvent.getDetail());
@@ -297,27 +310,28 @@ public class CalendarFragment extends Fragment implements OnDateSelectedListener
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1231) {
-            Log.d("test", "onActivityResult: shot");
             if(resultCode == Activity.RESULT_OK){
-                String pathURI=data.getStringExtra("pathURI");
-                String departureToArrival = data.getStringExtra("departureToArrival");
-                View view = pDialog.getCustomView();
+
+                pathURI = data.getStringExtra("pathURI");
+                departureToArrival = data.getStringExtra("departureToArrival");
+
+                View view = childDialog.getCustomView();
+                path = (Button)view.findViewById(R.id.path);
+
+
+                path.setText(departureToArrival);
+
                 int position = data.getIntExtra("position",0);
                 if(events.size()>0) {
                     eventsOfDay.get(position).setPathUri(pathURI);
                     eventsOfDay.get(position).setDepartureToArrival(departureToArrival);
                     eventsOfDay.get(position).setType(1);
-
-                    eventDao.update(eventsOfDay.get(position));
                 }
                 else{
 
                 }
-
-
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //만약 반환값이 없을 경우의 코드를 여기에 작성하세요.
             }
         }
     }
